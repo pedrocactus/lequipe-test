@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">LequipeTest</string>
+    <string name="last_video_title">Dernières Vidéos</string>
+    <string name="top_video_title">Top Vidéos</string>
+</resources>
