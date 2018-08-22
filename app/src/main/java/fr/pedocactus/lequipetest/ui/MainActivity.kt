@@ -4,9 +4,10 @@ import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
+import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v7.app.AppCompatActivity
 import fr.pedocactus.lequipetest.R
+import fr.pedocactus.lequipetest.ui.presentation.VideoFeedPresenter
 import kotlinx.android.synthetic.main.main_activity_layout.*
 
 class MainActivity : AppCompatActivity() {
@@ -21,18 +22,19 @@ class MainActivity : AppCompatActivity() {
 
         mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
 
-        container.adapter = mSectionsPagerAdapter
+        pager.adapter = mSectionsPagerAdapter
 
-        container.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabs))
-        tabs.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(container))
-        }
+        pager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabs))
+        tabs.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(pager))
 
+    }
 
-    //TODO WIP
-    inner class SectionsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
+    inner class SectionsPagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
 
         override fun getItem(position: Int): Fragment {
-            return NewVideosFragment.newInstance(position + 1)
+            return if (position == 0)
+                VideoFeedFragment.newInstance(VideoFeedPresenter.VideoPresenterType.NEW_VIDEOS) else
+                VideoFeedFragment.newInstance(VideoFeedPresenter.VideoPresenterType.TOP_VIDEOS)
         }
 
         override fun getCount(): Int {

@@ -1,35 +1,50 @@
-package fr.pedocactus.lequipetest
+package fr.pedocactus.lequipetest.ui.presentation
 
 import com.nhaarman.mockito_kotlin.capture
 import com.nhaarman.mockito_kotlin.verify
 import fr.pedocactus.lequipetest.domain.VideoInfo
 import fr.pedocactus.lequipetest.repository.VideoRepository
-import fr.pedocactus.lequipetest.ui.presentation.VideoPresentationModel
-import fr.pedocactus.lequipetest.ui.presentation.VideosPresenter
-import fr.pedocactus.lequipetest.ui.presentation.VideosPresenterContract
+import io.reactivex.Single
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.mockito.ArgumentCaptor
+import org.mockito.BDDMockito.given
 import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
+import org.mockito.junit.MockitoJUnit
+import rule.RxImmediateSchedulerRule
 import java.io.IOException
 
-class VideosPresenterTest {
+
+class VideoFeedPresenterTest {
 
 
-    lateinit var lastVideoPresenter: VideosPresenter
+    lateinit var lastVideoPresenter: VideoFeedPresenter
 
     @Mock
-    lateinit var view: VideosPresenterContract.View
+    lateinit var view: VideoFeedPresenterContract.View
+
+    @Mock
+    lateinit var repository: VideoRepository
 
     @Captor
     lateinit var captor: ArgumentCaptor<List<VideoPresentationModel>>
 
+
+    @Rule
+    @JvmField
+    var testSchedulerRule = RxImmediateSchedulerRule()
+
+    @Rule
+    @JvmField
+    val rule = MockitoJUnit.rule()!!
+
     @Before
     fun init() {
         MockitoAnnotations.initMocks(this)
-        lastVideoPresenter = VideosPresenter(VideoRepository, view)
+        lastVideoPresenter = VideoFeedPresenter(repository, view,VideoFeedPresenter.VideoPresenterType.NEW_VIDEOS)
     }
 
     @Test
@@ -37,10 +52,13 @@ class VideosPresenterTest {
 
         val video1 = VideoInfo("deux étoiles", "url1", "foot")
         val video2 = VideoInfo("swell", "url2", "surf")
+
+
         val videos = arrayListOf(video1, video2)
+        given(repository.fetchNewVideos()).willReturn(Single.just(videos))
 
         //WHEN
-        lastVideoPresenter.onSucceed(videos)
+        lastVideoPresenter.fetchVideos(true)
 
         //THEN
         verify(view).showVideos(capture(captor))
@@ -58,20 +76,27 @@ class VideosPresenterTest {
 
     @Test
     fun fetchLastVideosNoNetwork() {
+        given(repository.fetchNewVideos()).willReturn(Single.error(IOException()))
+
         //WHEN
-        lastVideoPresenter.onError(IOException())
+        lastVideoPresenter.fetchVideos(true)
 
         //THEN
+        verify(view).hideProgressView()
         verify(view).showNetworkError()
     }
 
     @Test
     fun fetchLastVideosGenericError() {
+        given(repository.fetchNewVideos()).willReturn(Single.error(Exception()))
+
         //WHEN
-        lastVideoPresenter.onError(Exception())
+        lastVideoPresenter.fetchVideos(true)
 
         //THEN
+        verify(view).hideProgressView()
         verify(view).showGenericError()
+
     }
 
 

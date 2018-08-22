@@ -1,20 +1,10 @@
 package fr.pedocactus.lequipetest.repository
 
 import fr.pedocactus.lequipetest.domain.VideoInfo
-import fr.pedocactus.lequipetest.repository.network.VideoNetworkRepo
-import io.reactivex.Observable
-
-object VideoRepository {
-    var videoNetworkRepo: VideoNetworkRepo = VideoNetworkRepo()
+import io.reactivex.Single
 
 
-    fun fetchNewVideos(): Observable<List<VideoInfo>> {
-        return videoNetworkRepo.fetchNewVideos()
-    }
-
-    //TODO WIP
-    fun fetchTopVideos(): Observable<List<VideoInfo>> {
-        return videoNetworkRepo.fetchTopVideos()
-    }
-
+interface VideoRepository {
+    fun fetchTopVideos(): Single<ArrayList<VideoInfo>>
+    fun fetchNewVideos(): Single<ArrayList<VideoInfo>>
 }

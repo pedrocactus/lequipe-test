@@ -20,7 +20,7 @@ import fr.pedocactus.lequipetest.ui.presentation.VideoPresentationModel
 class VideoAdapter(val context: Context?) : RecyclerView.Adapter<VideoAdapter.ViewHolder>() {
 
 
-    private var TAG = "VideoAdapter"
+    private val TAG = "VideoAdapter"
     private var videoPresentationModels: ArrayList<VideoPresentationModel> = arrayListOf()
     var imageWidth = 0
     var imageHeight = 0
@@ -39,9 +39,7 @@ class VideoAdapter(val context: Context?) : RecyclerView.Adapter<VideoAdapter.Vi
         holder.title.text = presentationModel.title
         holder.sport.text = presentationModel.sport
         if (context != null) {
-
             if (imageWidth == 0) {
-
                 if (holder.imageView.width == 0) {
                     holder.imageView.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
 
@@ -91,17 +89,16 @@ class VideoAdapter(val context: Context?) : RecyclerView.Adapter<VideoAdapter.Vi
 
     }
 
-    inline fun ViewTreeObserver.waitForLayout(crossinline f: () -> Unit) = {
-
-        addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-
-            override fun onGlobalLayout() {
-                removeOnGlobalLayoutListener(this)
-                f()
-            }
-
-        })
-
-    }
+//    inline fun ViewTreeObserver.waitForLayout(crossinline f: () -> Unit) = {
+//        this.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+//
+//            override fun onGlobalLayout() {
+//                removeOnGlobalLayoutListener(this)
+//                f()
+//            }
+//
+//        })
+//
+//    }
 
 }
